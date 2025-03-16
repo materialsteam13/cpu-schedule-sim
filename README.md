@@ -44,3 +44,4 @@ A web app built with Next.js to simulate different CPU scheduling algorithms
 - SJF - Shortest Job First
 - RR - Round Robin
 - Stcf - Shortest Time to Completion First
+- MLFQ - Multilevel Feedback Queue
