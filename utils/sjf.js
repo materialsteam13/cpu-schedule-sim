@@ -1,34 +1,38 @@
-export function sjfScheduler(processes) {
+export function sjfScheduler(processes) 
+{
     let time = 0;
-    let completed = 0;
-    let n = processes.length;
-    let queue = [];
+
     let result = [];
 
-    // Sort by arrival time first
-    processes.sort((a, b) => a.arrivalTime - b.arrivalTime);
+    let queue = [...processes];
 
-    while (completed < n) {
-        // Add processes that have arrived to the queue
-        for (let i = 0; i < processes.length; i++) {
-            if (processes[i].arrivalTime === time) {
-                queue.push({ ...processes[i] });
-                queue.sort((a, b) => a.burstTime - b.burstTime); // Sort by shortest burst time
-            }
+    // Sort by arrival time first, then burst time
+    queue.sort((a, b) => a.arrivalTime - b.arrivalTime || a.burstTime - b.burstTime);
+
+    while (queue.length > 0) 
+    {
+        let availableProcesses = queue.filter(p => p.arrivalTime <= time);
+        
+        if (availableProcesses.length === 0) 
+        {
+            // If no process is available, fast-forward time to next arrival
+            time = queue[0].arrivalTime;
+            continue;
         }
 
-        if (queue.length > 0) {
-            // Select shortest job
-            let current = queue.shift();
-            for (let i = 0; i < current.burstTime; i++) {
-                result.push({ processId: current.id, time: time + i });
-            }
+        // Select process with shortest burst time
+        let process = availableProcesses.reduce((prev, curr) => 
+            curr.burstTime < prev.burstTime ? curr : prev
+        );
 
-            time += current.burstTime; // Move time forward
-            completed++;
-        } else {
-            time++; // No process available, move time forward
+        queue = queue.filter(p => p.id !== process.id); // Remove from queue
+
+        for (let i = 0; i < process.burstTime; i++) 
+        {
+            result.push({ processId: process.id, time: time + i });
         }
+
+        time += process.burstTime;
     }
 
     return result;

@@ -22,14 +22,27 @@ export default function SjfSimulation()
 
     // Run SJF Scheduling
     const runSjf = () => {
+        if (processes.length === 0) 
+        {
+            alert("Please generate processes first!");
+            return;
+        }
+
         const output = sjfScheduler(processes);
-        setResult(output);
+        console.log("SJF Output:", output);
+        setResult([...output]);
     };
 
     // Generate PDF
     const downloadPDF = () => {
+        if (result.length === 0) 
+        {
+            alert("Run the simulation first!");
+            return;
+        }
+
         const doc = new jsPDF();
-        doc.text("SJF Scheduling Results", 10, 10);
+        doc.text("Shortest Job First Scheduling Results", 10, 10);
         result.forEach((entry, i) => {
             doc.text(`Time ${entry.time}: Process ${entry.processId}`, 10, 20 + i * 10);
         });
@@ -52,13 +65,14 @@ export default function SjfSimulation()
                 <div className="mt-4">
                     <h3 className="font-semibold">Execution Timeline:</h3>
                     <Bar
+                        key={result.length} // Forces re-render
                         data={{
                             labels: result.map((r) => `T${r.time}`),
                             datasets: [
                                 {
                                     label: "Process Execution",
                                     data: result.map((r) => r.processId),
-                                    backgroundColor: "rgba(75,192,192,0.6)",
+                                    backgroundColor: "rgba(54,162,235,0.6)",
                                 },
                             ],
                         }}
