@@ -8,6 +8,7 @@ import MlfqSimulation from "../components/MlfqSimulation";
 export default function Home() 
 {
     const [selectedSimulations, setSelectedSimulations] = useState([]);
+    const [numProcesses, setNumProcesses] = useState(5); // default of 5
 
     const simulations = [
         { name: "FIFO", component: <FifoSimulation />, key: "fifo" },
@@ -15,7 +16,7 @@ export default function Home()
         { name: "RR", component: <RrSimulation />, key: "rr" },
         { name: "STCF", component: <StcfSimulation />, key: "stcf" },
         { name: "MLFQ", component: <MlfqSimulation />, key: "mlfq" },
-        
+
     ];
 
     const toggleSimulation = (key) => {
@@ -38,7 +39,21 @@ export default function Home()
     return (
         <div className="container mx-auto p-6">
             <h1 className="text-2xl font-bold mb-4 text-center">CPU Scheduling Simulator</h1>
-            
+
+            {/* User Input for Number of Processes */}
+            <div className="mb-4 text-center">
+                <label className="mr-2 font-semibold">Number of Processes:</label>
+                <input
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={numProcesses}
+                    onChange={(e) => setNumProcesses(parseInt(e.target.value) || 1)}
+                    className="border px-2 py-1 rounded"
+                />
+            </div>
+
+            {/* Buttons to Select Algorithm */}
             <div className="flex flex-wrap justify-center gap-4 mb-6">
                 {simulations.map((sim) => (
                     <button
@@ -61,6 +76,7 @@ export default function Home()
                 </button>
             </div>
 
+            {/* Display Selected Simulations */}
             <div className={`grid ${selectedSimulations.length > 1 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-6`}>
                 {simulations
                     .filter((sim) => selectedSimulations.includes(sim.key))
