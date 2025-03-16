@@ -3,6 +3,7 @@ import StcfSimulation from "../components/StcfSimulation";
 import SjfSimulation from "../components/SjfSimulation";
 import RrSimulation from "../components/RrSimulation";
 import FifoSimulation from "../components/FifoSimulation";
+import MlfqSimulation from "../components/MlfqSimulation";
 
 export default function Home() 
 {
@@ -13,6 +14,8 @@ export default function Home()
         { name: "SJF", component: <SjfSimulation />, key: "sjf" },
         { name: "RR", component: <RrSimulation />, key: "rr" },
         { name: "STCF", component: <StcfSimulation />, key: "stcf" },
+        { name: "MLFQ", component: <MlfqSimulation />, key: "mlfq" },
+        
     ];
 
     const toggleSimulation = (key) => {
