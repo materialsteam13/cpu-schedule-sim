@@ -1,7 +1,25 @@
-function fifoScheduler(processes)
+export function fifoScheduler(processes) 
 {
-    // Sorting process by arrival time; First process in, is first process out.
-    return processes.sort((a, b) => a.arrivalTime - b.arrivalTime);
-}
+    let time = 0;
+    let result = [];
 
-module.exports = { fifoScheduler };
+    // Sort by arrival time
+    const queue = [...processes].sort((a, b) => a.arrivalTime - b.arrivalTime);
+
+    queue.forEach((process) => {
+        // If CPU is idle, fast-forward time
+        if (time < process.arrivalTime) 
+        {
+            time = process.arrivalTime;
+        }
+
+        for (let i = 0; i < process.burstTime; i++) 
+        {
+            result.push({ processId: process.id, time: time + i });
+        }
+
+        time += process.burstTime; // Move time forward
+    });
+
+    return result;
+}
