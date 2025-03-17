@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { fifoScheduler } from "../utils/fifo";
 import { Bar } from "react-chartjs-2";
+import Chart from "chart.js/auto";
 import jsPDF from "jspdf";
 
 export default function FifoSimulation({ numProcesses }) {

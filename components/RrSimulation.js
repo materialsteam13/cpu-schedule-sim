@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { rrScheduler } from "../utils/rr";
 import { Bar } from "react-chartjs-2";
+import Chart from "chart.js/auto";
 import jsPDF from "jspdf";
 
 export default function RrSimulation({ numProcesses }) {

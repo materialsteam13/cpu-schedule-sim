@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { stcfScheduler } from "../utils/stcf";
 import { Bar } from "react-chartjs-2";
-//import Chart from "chart.js/auto";
+import Chart from "chart.js/auto";
 import jsPDF from "jspdf";
 
 export default function StcfSimulation() 
