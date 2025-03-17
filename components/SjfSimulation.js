@@ -1,17 +1,29 @@
 import { useState, useEffect } from "react";
 import { sjfScheduler } from "../utils/sjf";
-import { Bar } from "react-chartjs-2";
-import Chart from "chart.js/auto";
-import jsPDF from "jspdf";
+import dynamic from "next/dynamic";
 
-export default function SjfSimulation({ numProcesses }) {
+// Dynamically import Bar chart component with SSR disabled
+const BarChart = dynamic(() => import('react-chartjs-2').then(mod => mod.Bar), {
+  ssr: false,
+});
+
+// Dynamically import jsPDF with SSR disabled
+const jsPDF = dynamic(() => import('jspdf'), { ssr: false });
+
+// Import necessary Chart.js components
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+
+// Register the required components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+export default function SjfSimulation({ numProcesses = 5 }) {
     const [processes, setProcesses] = useState([]);
     const [result, setResult] = useState([]);
 
     // Generate processes when numProcesses changes
     useEffect(() => {
         generateProcesses();
-    }, [numProcesses]); 
+    }, [numProcesses]);
 
     const generateProcesses = () => {
         const newProcesses = Array.from({ length: numProcesses }, (_, i) => ({
@@ -70,7 +82,7 @@ export default function SjfSimulation({ numProcesses }) {
             {result.length > 0 && (
                 <div className="mt-4">
                     <h3 className="font-semibold">Execution Timeline:</h3>
-                    <Bar
+                    <BarChart
                         key={result.length} // Forces re-render
                         data={{
                             labels: result.map((r) => `T${r.time}`),

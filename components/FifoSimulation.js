@@ -1,10 +1,22 @@
 import { useState, useEffect } from "react";
 import { fifoScheduler } from "../utils/fifo";
-import { Bar } from "react-chartjs-2";
-import Chart from "chart.js/auto";
-import jsPDF from "jspdf";
+import dynamic from "next/dynamic";
 
-export default function FifoSimulation({ numProcesses }) {
+// Dynamically import Bar chart component with SSR disabled
+const BarChart = dynamic(() => import('react-chartjs-2').then(mod => mod.Bar), {
+  ssr: false,
+});
+
+// Dynamically import jsPDF with SSR disabled
+const jsPDF = dynamic(() => import('jspdf').then((mod) => mod.jsPDF), { ssr: false });
+
+// Import necessary Chart.js components
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+
+// Register the required components
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+export default function FifoSimulation({ numProcesses = 5 }) {
     const [processes, setProcesses] = useState([]);
     const [result, setResult] = useState([]);
 
@@ -40,10 +52,9 @@ export default function FifoSimulation({ numProcesses }) {
             alert("Run the simulation first!");
             return;
         }
-
-        const doc = new jsPDF();
-        doc.text("FIFO Scheduling Results", 10, 10);
-        result.forEach((entry, i) => {
+            const doc = new jsPDF();
+         doc.text("FIFO Scheduling Results", 10, 10);
+            result.forEach((entry, i) => {
             doc.text(`Time ${entry.time}: Process ${entry.processId}`, 10, 20 + i * 10);
         });
         doc.save("fifo_results.pdf");
@@ -70,7 +81,7 @@ export default function FifoSimulation({ numProcesses }) {
             {result.length > 0 && (
                 <div className="mt-4">
                     <h3 className="font-semibold">Execution Timeline:</h3>
-                    <Bar
+                    <BarChart
                         key={result.length} // Forces re-render
                         data={{
                             labels: result.map((r) => `T${r.time}`),
