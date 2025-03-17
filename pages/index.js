@@ -5,35 +5,28 @@ import RrSimulation from "../components/RrSimulation";
 import FifoSimulation from "../components/FifoSimulation";
 import MlfqSimulation from "../components/MlfqSimulation";
 
-export default function Home() 
-{
+export default function Home() {
     const [selectedSimulations, setSelectedSimulations] = useState([]);
-    const [numProcesses, setNumProcesses] = useState(5); // default of 5
+    const [numProcesses, setNumProcesses] = useState(5); // Default to 5 processes
 
     const simulations = [
-        { name: "FIFO", component: <FifoSimulation />, key: "fifo" },
-        { name: "SJF", component: <SjfSimulation />, key: "sjf" },
-        { name: "RR", component: <RrSimulation />, key: "rr" },
-        { name: "STCF", component: <StcfSimulation />, key: "stcf" },
-        { name: "MLFQ", component: <MlfqSimulation />, key: "mlfq" },
-
+        { name: "FIFO", component: (num) => <FifoSimulation numProcesses={num} />, key: "fifo" },
+        { name: "SJF", component: (num) => <SjfSimulation numProcesses={num} />, key: "sjf" },
+        { name: "RR", component: (num) => <RrSimulation numProcesses={num} />, key: "rr" },
+        { name: "STCF", component: (num) => <StcfSimulation numProcesses={num} />, key: "stcf" },
+        { name: "MLFQ", component: (num) => <MlfqSimulation numProcesses={num} />, key: "mlfq" },
     ];
 
     const toggleSimulation = (key) => {
-        if (selectedSimulations.includes(key)) 
-        {
-            setSelectedSimulations(selectedSimulations.filter((sim) => sim !== key));
-        } else {
-            setSelectedSimulations([...selectedSimulations, key]);
-        }
+        setSelectedSimulations((prev) =>
+            prev.includes(key) ? prev.filter((sim) => sim !== key) : [...prev, key]
+        );
     };
 
     const selectAll = () => {
-        if (selectedSimulations.length === simulations.length) {
-            setSelectedSimulations([]); // Deselect all
-        } else {
-            setSelectedSimulations(simulations.map((sim) => sim.key)); // Select all
-        }
+        setSelectedSimulations((prev) =>
+            prev.length === simulations.length ? [] : simulations.map((sim) => sim.key)
+        );
     };
 
     return (
@@ -46,9 +39,9 @@ export default function Home()
                 <input
                     type="number"
                     min="1"
-                    max="20"
+                    max="32"
                     value={numProcesses}
-                    onChange={(e) => setNumProcesses(parseInt(e.target.value) || 1)}
+                    onChange={(e) => setNumProcesses(Math.max(1, Math.min(32, parseInt(e.target.value) || 1)))}
                     className="border px-2 py-1 rounded"
                 />
             </div>
@@ -83,7 +76,7 @@ export default function Home()
                     .map((sim) => (
                         <div key={sim.key} className="p-4 border rounded-lg shadow">
                             <h2 className="text-xl font-semibold">{sim.name} Scheduling</h2>
-                            {sim.component}
+                            {sim.component(numProcesses)}
                         </div>
                     ))}
             </div>
