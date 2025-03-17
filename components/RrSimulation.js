@@ -1,31 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { rrScheduler } from "../utils/rr";
 import { Bar } from "react-chartjs-2";
-import Chart from "chart.js/auto";
 import jsPDF from "jspdf";
 
-export default function RrSimulation() 
-{
+export default function RrSimulation({ numProcesses }) {
     const [processes, setProcesses] = useState([]);
     const [result, setResult] = useState([]);
     const [timeQuantum, setTimeQuantum] = useState(2); // Default quantum
 
-    // Generate random processes
+    // Generate processes based on numProcesses
+    useEffect(() => {
+        generateProcesses();
+    }, [numProcesses]); // Regenerate when numProcesses changes
+
     const generateProcesses = () => {
-        const num = Math.floor(Math.random() * 5) + 3; // Random 3-7 processes
-        const newProcesses = Array.from({ length: num }, (_, i) => ({
+        const newProcesses = Array.from({ length: numProcesses }, (_, i) => ({
             id: i + 1,
-            arrivalTime: Math.floor(Math.random() * 5),
-            burstTime: Math.floor(Math.random() * 10) + 1,
+            arrivalTime: Math.floor(Math.random() * 5), // Random arrival time between 0-4
+            burstTime: Math.floor(Math.random() * 10) + 1, // Random burst time between 1-10
         }));
         setProcesses(newProcesses);
     };
 
     // Run Round Robin Scheduling
     const runRr = () => {
-        if (processes.length === 0) 
-        {
-            alert("Please generate processes first!");
+        if (processes.length === 0) {
+            alert("No processes available! Try generating them first.");
             return;
         }
 
@@ -36,8 +36,7 @@ export default function RrSimulation()
 
     // Generate PDF
     const downloadPDF = () => {
-        if (result.length === 0) 
-        {
+        if (result.length === 0) {
             alert("Run the simulation first!");
             return;
         }
@@ -66,9 +65,15 @@ export default function RrSimulation()
                 />
             </div>
 
-            <button onClick={generateProcesses} className="bg-blue-500 text-white px-4 py-2 mr-2">Generate Processes</button>
-            <button onClick={runRr} className="bg-green-500 text-white px-4 py-2">Run RR</button>
-            <button onClick={downloadPDF} className="bg-red-500 text-white px-4 py-2 ml-2">Download PDF</button>
+            <button onClick={generateProcesses} className="bg-blue-500 text-white px-4 py-2 mr-2">
+                Generate Processes
+            </button>
+            <button onClick={runRr} className="bg-green-500 text-white px-4 py-2">
+                Run RR
+            </button>
+            <button onClick={downloadPDF} className="bg-red-500 text-white px-4 py-2 ml-2">
+                Download PDF
+            </button>
 
             <div className="mt-4">
                 <h3 className="font-semibold">Processes:</h3>
